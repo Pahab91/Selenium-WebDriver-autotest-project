@@ -17,3 +17,9 @@ class ProductPageLocators():
     PRICE_OF_PRODUCT = (By.CSS_SELECTOR, '[class="price_color"]')
     SHOULD_BE_ADDED_TO_THE_CART = (By.CSS_SELECTOR, 'div :nth-last-of-type(3) div strong')
     CORRECT_PRICE_HAS_BEEN_ADDED = (By.CSS_SELECTOR, '[class="alertinner "] :nth-child(1)')
+    SUCCESS_MESSAGE = (By.CSS_SELECTOR, '[class="alertinner "]')
+
+
+class BasePageLocators():
+    LOGIN_LINK = (By.CSS_SELECTOR, "#login_link")
+    LOGIN_LINK_INVALID = (By.CSS_SELECTOR, "#login_link_inc")
