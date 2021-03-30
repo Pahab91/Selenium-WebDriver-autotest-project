@@ -1,6 +1,7 @@
 from pages.product_page import ProductPage
 import pytest
 from pages.login_page import LoginPage
+from pages.basket_page import BasketPage
 
 
 def test_guest_should_see_login_link_on_product_page(browser):
@@ -83,5 +84,18 @@ def test_guest_should_be_added_to_the_cart(browser):
     page = ProductPage(browser, link)
     page.open()
     page.should_be_added_to_the_cart()
+
+
+def test_guest_cant_see_product_in_basket_opened_from_product_page(browser):
+    link = "http://selenium1py.pythonanywhere.com/en-gb/catalogue/the-city-and-the-stars_95/"
+    page = BasketPage(browser, link)
+    page.open()
+    page.go_to_basket_page()
+    page.should_be_no_items_in_basket()
+    page.basket_should_be_empty()
+    # Гость открывает страницу товара
+    # Переходит в корзину по кнопке в шапке
+    # Ожидаем, что в корзине нет товаров
+    # Ожидаем, что есть текст о том что корзина пуста
 
 # pytest -v --tb=line --language=en test_product_page.py
