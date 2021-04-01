@@ -2,6 +2,7 @@ from pages.product_page import ProductPage
 import pytest
 from pages.login_page import LoginPage
 from pages.basket_page import BasketPage
+import time
 
 
 def test_guest_should_see_login_link_on_product_page(browser):
@@ -11,6 +12,7 @@ def test_guest_should_see_login_link_on_product_page(browser):
     page.should_be_login_link()
 
 
+@pytest.mark.need_review
 def test_guest_can_go_to_login_page_from_product_page(browser):
     link = "http://selenium1py.pythonanywhere.com/en-gb/catalogue/the-city-and-the-stars_95/"
     page = ProductPage(browser, link)
@@ -27,9 +29,6 @@ def test_guest_cant_see_success_message_after_adding_product_to_basket(browser):
     page.open()
     page.add_to_chart_without_capcha()
     assert page.should_not_be_success_message()
-    # Открываем страницу товара
-    # Добавляем товар в корзину
-    # Проверяем, что нет сообщения об успехе с помощью is_not_element_present
 
 
 @pytest.mark.xfail
@@ -38,8 +37,6 @@ def test_guest_cant_see_success_message(browser):
     page = ProductPage(browser, link)
     page.open()
     assert page.should_not_be_success_message()
-    # Открываем страницу товара
-    # Проверяем, что нет сообщения об успехе с помощью is_not_element_present
 
 
 @pytest.mark.xfail
@@ -49,9 +46,6 @@ def test_message_disappeared_after_adding_product_to_basket(browser):
     page.open()
     page.add_to_chart_without_capcha()
     assert page.should_disappear_of_success_message()
-    # Открываем страницу товара
-    # Добавляем товар в корзину
-    # Проверяем, что нет сообщения об успехе с помощью is_disappeared
 
 
 @pytest.mark.parametrize('link', ["http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer0",
@@ -65,6 +59,7 @@ def test_message_disappeared_after_adding_product_to_basket(browser):
                                                "/?promo=offer7", marks=pytest.mark.xfail),
                                   "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer8",
                                   "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer9"])
+@pytest.mark.need_review
 def test_guest_can_add_product_to_basket(browser, link):
     page = ProductPage(browser, link)
     page.open()
@@ -86,6 +81,7 @@ def test_guest_should_be_added_to_the_cart(browser):
     page.should_be_added_to_the_cart()
 
 
+@pytest.mark.need_review
 def test_guest_cant_see_product_in_basket_opened_from_product_page(browser):
     link = "http://selenium1py.pythonanywhere.com/en-gb/catalogue/the-city-and-the-stars_95/"
     page = BasketPage(browser, link)
@@ -93,9 +89,26 @@ def test_guest_cant_see_product_in_basket_opened_from_product_page(browser):
     page.go_to_basket_page()
     page.should_be_no_items_in_basket()
     page.basket_should_be_empty()
-    # Гость открывает страницу товара
-    # Переходит в корзину по кнопке в шапке
-    # Ожидаем, что в корзине нет товаров
-    # Ожидаем, что есть текст о том что корзина пуста
+
+
+@pytest.mark.need_review
+class TestUserAddToBasketFromProductPage:
+    @pytest.fixture(scope="function", autouse=True)
+    def setup(self, browser):
+        link = "http://selenium1py.pythonanywhere.com/en-gb/accounts/login/"
+        page = LoginPage(browser, link)
+        page.open()
+        page.should_be_login_page(log=1)  # См.описание функции в login_page.py, чтобы узнать про параметр, если нужно
+        page.should_be_authorized_user()
+        time.sleep(1)
+
+    def test_user_can_add_product_to_basket(self, browser):
+        link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207"
+        page = ProductPage(browser, link)
+        page.open()
+        page.add_to_chart_without_capcha()
+        time.sleep(1)
+        page.should_be_added_to_the_cart_without_capcha()
 
 # pytest -v --tb=line --language=en test_product_page.py
+# pytest -v --tb=line --language=en -m need_review
